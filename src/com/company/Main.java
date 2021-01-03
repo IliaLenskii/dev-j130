@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -118,9 +117,15 @@ public class Main {
             return;
         }
 
-/*
-4. Напишите оператор SELECT, который запрашивает идентификатор, название документа и его автора, при условии, что в названии документа есть слово report
- */
+        System.out.println("__________");
+
         System.out.println("Successfully");
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+
+        System.out.println("__finalize");
     }
 }
