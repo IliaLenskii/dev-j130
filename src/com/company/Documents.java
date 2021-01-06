@@ -3,6 +3,8 @@
  */
 package com.company;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,6 +29,26 @@ public class Documents {
     private String text;
     private Date date;
     private int author_id;
+
+    private static final String TABLE_DOCUMENTS = "CREATE TABLE IF NOT EXISTS `Documents` ("+
+            "`id` INTEGER PRIMARY KEY AUTOINCREMENT,"+
+            "`name` VARCHAR(64) NOT NULL,"+
+            "`info` TEXT,"+
+            "`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,"+
+            "`author` INTEGER NOT NULL,"+
+            "FOREIGN KEY(author) REFERENCES Authors(id)"+
+            ")";
+
+    private static final String[] TABLE_DOCUMENTS_DATA = new String[]{
+            "DELETE FROM `Documents`",
+
+            "INSERT INTO `Documents` (`name`, `info`, `author`) VALUES ('Project plan', 'First content', (SELECT `id` FROM `Authors` WHERE `name` == 'Arnold Grey' LIMIT 1))",
+
+            "INSERT INTO `Documents` (`name`, `info`, `author`) VALUES ('First report', 'Second content', (SELECT `id` FROM `Authors` WHERE `name` == 'Tom Hawkins' LIMIT 1))",
+            "INSERT INTO `Documents` (`name`, `info`, `author`) VALUES ('Test result', 'Third content', (SELECT `id` FROM `Authors` WHERE `name` == 'Tom Hawkins' LIMIT 1))",
+
+            "INSERT INTO `Documents` (`name`, `info`, `author`) VALUES ('Second report', 'Report content', (SELECT `id` FROM `Authors` WHERE `name` == 'Jim Beam' LIMIT 1))"
+    };
 
     public Documents(int document_id, String title, String text, int author_id) {
         this(document_id, title, text,
@@ -77,6 +99,26 @@ public class Documents {
         this.author_id = author_id;
     }
 
+    public static boolean prepareSQLData(Statement statem) {
+
+        try {
+
+            // Tables create
+            statem.execute(TABLE_DOCUMENTS);
+
+            // Data for table Documents
+            for(var i = 0; i < TABLE_DOCUMENTS_DATA.length; ++i)
+                statem.execute(TABLE_DOCUMENTS_DATA[i]);
+
+            return true;
+
+        } catch(SQLException e) {
+
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @Override
     public int hashCode() {
         return VERSION + this.document_id + Objects.hashCode(this.title) + this.author_id;
@@ -95,5 +137,4 @@ public class Documents {
                 || this.author_id != other.author_id
                 || !Objects.equals(this.title, other.title));
     }
-
 }

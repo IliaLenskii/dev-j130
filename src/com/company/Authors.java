@@ -3,6 +3,8 @@
  */
 package com.company;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 /**
@@ -22,7 +24,22 @@ public class Authors {
     private String author;
     private String notes;
 
+    private static final String TABLE_AUTHORS = "CREATE TABLE IF NOT EXISTS `Authors` ("+
+            "`id` INTEGER PRIMARY KEY AUTOINCREMENT,"+
+            "`name` VARCHAR(64) NOT NULL,"+
+            "`info` VARCHAR(255)"+
+            ")";
+
+    private static final String[] TABLE_AUTHORS_DATA = new String[]{
+            "DELETE FROM `Authors`",
+
+            "INSERT INTO `Authors` (`name`) VALUES ('Arnold Grey')",
+            "INSERT INTO `Authors` (`name`, `info`) VALUES ('Tom Hawkins', 'new author')",
+            "INSERT INTO `Authors` (`name`) VALUES ('Jim Beam')"
+    };
+
     public Authors(int author_id, String author) {
+
         this(author_id, author, null);
     }
 
@@ -52,6 +69,26 @@ public class Authors {
         this.notes = notes;
     }
 
+    public static boolean prepareSQLData(Statement statem) {
+
+        try {
+
+            // Tables create
+            statem.execute(TABLE_AUTHORS);
+
+            // Data for table Authors
+            for(var i = 0; i < TABLE_AUTHORS_DATA.length; ++i)
+                statem.execute(TABLE_AUTHORS_DATA[i]);
+
+            return true;
+
+        } catch(SQLException e) {
+
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @Override
     public int hashCode() {
         return VERSION + this.author_id + Objects.hashCode(this.author);
@@ -70,5 +107,4 @@ public class Authors {
         return !(this.author_id != other.author_id
                 || !Objects.equals(this.author, other.author));
     }
-
 }

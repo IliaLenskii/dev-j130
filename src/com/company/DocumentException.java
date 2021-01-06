@@ -10,8 +10,7 @@ package com.company;
  */
 public class DocumentException extends Exception {
 
-    public DocumentException() {
-    }
+    private DocumentException() {}
 
     public DocumentException(String string) {
         super(string);
