@@ -1,7 +1,7 @@
 /*
  * DEV-J130. Задача №2.
  */
-package jdbc;
+package com.company;
 
 import java.util.Date;
 import java.util.Objects;
