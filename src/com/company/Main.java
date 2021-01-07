@@ -4,12 +4,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        try (DbServer currSer = DbServer.run()) {
+        /*
+Дан класс FileReceiver, предназначенный для получения файла по сети и его
+сохранения в локальной файловой системе. Определите парный к нему класс
+FileSender, который отправляет по сети файл, предназначенный для получения
+классом FileReceiver
+         */
 
-        } catch (Exception err){
-
-            err.printStackTrace();
-        }
 
         System.out.println("Successfully");
     }

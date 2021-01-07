@@ -1,13 +1,10 @@
-# Лабораторная работа №2
+# Лабораторная работа №3
 
 *по курсу "DEV-J130. Java SE. Разработка многоуровневых приложений"*
 
-## JDBC
+## Взаимодействие по сети
 
-1. Сложные SQL запросы.
-2. Технология JDBC. Драйверы к базам данных. Подключение jdbc драйвера.
-3. Основы использования класса DriverManager. Определение строки подключения. Способы загрузки драйвера. Подключение к базе данных.
-4. Обзор пакета java.sql - интерфейсы Connection, Statement, PreparedStatement, ResultSet.
-
-sqlite-jdbc:
-https://github.com/xerial/sqlite-jdbc
+1. Передача данных по сети, модель OSI.
+2. Особенности передачи данных по протоколу UDP - DatagramSocket, DatagramPacket.
+3. Особенности передачи данных по протоколу TCP/IP - Socket, ServerSocket.
+4. URL, URLConnection, HttpServer.
