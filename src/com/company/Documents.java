@@ -36,7 +36,7 @@ public class Documents {
             "`info` TEXT,"+
             "`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,"+
             "`author` INTEGER NOT NULL,"+
-            "FOREIGN KEY(author) REFERENCES Authors(id)"+
+            "FOREIGN KEY(author) REFERENCES Authors(id) ON DELETE CASCADE"+
             ")";
 
     private static final String[] TABLE_DOCUMENTS_DATA = new String[]{

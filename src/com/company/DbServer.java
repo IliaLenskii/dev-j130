@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class DbServer implements IDbService {
@@ -39,6 +40,8 @@ public class DbServer implements IDbService {
             connection = DriverManager.getConnection("jdbc:sqlite:test.db3");
             statement = connection.createStatement();
             statement.setQueryTimeout(30);
+            statement.execute("PRAGMA foreign_keys = ON");
+
         } catch(SQLException err) {
 
             err.printStackTrace();
@@ -52,7 +55,6 @@ public class DbServer implements IDbService {
         Authors a1 = new Authors (0, "Authors 1", "Info 1");
 
         try {
-
 
             // Добавили нового автора
             addAuthor(a1);
@@ -73,42 +75,23 @@ public class DbServer implements IDbService {
             // Найдем что там написал это автор
             findDocumentByAuthor(a1);
 
+            // Найти все записи, которые содержат слово: content
+            findDocumentByContent("content");
+
+            /*
+            * Удалить автора и его произведения
+            *
+            * Удаление всех связанных записей происходит согласно поведению:
+            * FOREIGN KEY(author) REFERENCES Authors(id) ON DELETE CASCADE
+            *
+            * @see <a href="https://www.sqlite.org/foreignkeys.html#fk_actions">ON DELETE</a>
+            */
+            //deleteAuthor(a1);
+
         } catch (DocumentException err) {
 
              err.printStackTrace();
         }
-
-/*
-        // Second step
-        try {
-
-            // Update if the column is null
-            statement.execute("UPDATE `Authors` SET `info` = \"No Data\" WHERE `info` IS NULL");
-
-
-            // All doc by Tom Hawkins
-            ResultSet  rs = statement.executeQuery("SELECT * FROM Documents WHERE `author` = (SELECT `id` FROM `Authors` WHERE `name` = 'Tom Hawkins')");
-
-            while(rs.next()) {
-                System.out.println("name: "+ rs.getString("name") +", info: "+ rs.getString("info"));
-            }
-
-            System.out.println("__________");
-
-            // Look for doc with %report%
-            ResultSet  rs2 = statement.executeQuery("SELECT `id`, `name`, (SELECT `name` FROM `Authors` WHERE Authors.`id` = `author`) as autName FROM Documents as D WHERE `name` LIKE '%report%'");
-
-            while(rs2.next()) {
-                System.out.println("id: "+ rs.getInt("id") +", name: "+ rs.getString("name")+", author: "+ rs.getString("autName"));
-            }
-
-        } catch(SQLException e) {
-
-            e.printStackTrace();
-            return;
-        }
-
-        */
     }
 
     @Override
@@ -216,11 +199,10 @@ public class DbServer implements IDbService {
     @Override
     public Documents[] findDocumentByAuthor(Authors author) throws  DocumentException {
 
-
         int id = author.getAuthor_id();
         String name = author.getAuthor();
 
-        String sql = "SELECT *, (SELECT COUNT(`id`) FROM Documents WHERE `author` = ?) as size FROM Documents WHERE `author` = ? OR name = ?";
+        String sql = "SELECT *, (SELECT COUNT(`id`) FROM Documents WHERE `author` = ?) as size FROM Documents WHERE `author` = (SELECT `id` FROM `Authors` WHERE `id` = ? OR name = ? Limit 1)";
 
         PreparedStatement preparedStatement = null;
 
@@ -250,11 +232,11 @@ public class DbServer implements IDbService {
 
 
                 resObj[i++] = new Documents(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        attr4,
-                        id
+                    rs.getInt(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    attr4,
+                    id
                 );
 
             }
@@ -270,19 +252,83 @@ public class DbServer implements IDbService {
     @Override
     public Documents[] findDocumentByContent(String content) throws DocumentException {
 
-        return null;
+        String sql = "SELECT * FROM Documents WHERE `info` LIKE ?";
+
+        PreparedStatement preparedStatement = null;
+
+        try {
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "%"+ content +"%");
+
+            ResultSet rs = preparedStatement.executeQuery();
+            SimpleDateFormat paterStrDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int i = 0;
+
+            ArrayList<Documents> docList = new ArrayList<>();
+
+            while(rs.next()) {
+
+                Date attr4 = new Date(1970, 0, 1);
+
+                try {
+                    attr4 = paterStrDate.parse(rs.getString(4));
+                } catch (ParseException err){}
+
+                docList.add(new Documents(
+                    rs.getInt(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    attr4,
+                    rs.getInt(5)
+                ));
+            }
+
+            if(docList.size() < 1)
+                return null;
+
+            Documents[] resObj = new Documents[docList.size()];
+            int[] size = new int[]{0};
+
+            docList.forEach(itm -> {
+
+                resObj[ size[0]++ ] = itm;
+            });
+
+            return resObj.length > 0 ? resObj : null;
+
+        } catch (SQLException err) {
+
+            throw new DocumentException( err.toString() );
+        }
     }
 
     @Override
     public boolean deleteAuthor(Authors author) throws DocumentException {
 
-        return false;
+        return deleteAuthor( author.getAuthor_id() );
     }
 
     @Override
     public boolean deleteAuthor(int id) throws DocumentException {
 
-        return false;
+        String sql = "DELETE FROM `Authors` WHERE `id` = ?";
+
+        PreparedStatement preparedStatement = null;
+
+        try {
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.execute();
+
+            return true;
+
+        } catch (SQLException err) {
+
+            throw new DocumentException( err.toString() );
+        }
     }
 
     public static DbServer run() {
@@ -317,7 +363,5 @@ public class DbServer implements IDbService {
         }
 
         dbServ = null;
-
-        //System.out.println("__close");
     }
 }
