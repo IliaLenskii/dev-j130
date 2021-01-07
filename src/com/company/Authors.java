@@ -20,7 +20,7 @@ import java.util.Objects;
 public class Authors {
 
     public static final int VERSION = 79897;
-    private final int author_id;
+    private int author_id;
     private String author;
     private String notes;
 
@@ -52,6 +52,8 @@ public class Authors {
     public int getAuthor_id() {
         return author_id;
     }
+
+    public void setAuthor_id(int author_id) { this.author_id = author_id; }
 
     public String getAuthor() {
         return author;

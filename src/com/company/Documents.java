@@ -24,7 +24,7 @@ import java.util.Objects;
 public class Documents {
 
     public static final int VERSION = 267384;
-    private final int document_id;
+    private int document_id;
     private String title;
     private String text;
     private Date date;
@@ -51,8 +51,7 @@ public class Documents {
     };
 
     public Documents(int document_id, String title, String text, int author_id) {
-        this(document_id, title, text,
-                new Date(System.currentTimeMillis()), author_id);
+        this(document_id, title, text, new Date(System.currentTimeMillis()), author_id);
     }
 
     public Documents(int document_id, String title, String text, Date date, int author_id) {
@@ -66,6 +65,7 @@ public class Documents {
     public int getDocument_id() {
         return document_id;
     }
+    public void setDocument_id(int document_id) { this.document_id = document_id; }
 
     public String getTitle() {
         return title;
