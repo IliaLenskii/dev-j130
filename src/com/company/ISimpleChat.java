@@ -1,7 +1,7 @@
 /*
  * Курс DEV-J130. Задание №4. Основы многопоточного программирования.
  */
-package ru.spbstu.hse.j130.chat;
+package com.company;
 
 /**
  ** Простой чат для двух собеседников. Реализация этого интерфейса должна
@@ -26,6 +26,12 @@ public interface ISimpleChat extends AutoCloseable {
      * Стандартный порт, на котором принимается сообщения сервером.
      */
     public static final int SERVER_PORT = 45678;
+
+    /**
+     *  адрес сервера.
+     */
+    public static final String SERVER_ADDRESS = "127.0.0.1";
+
     /**
      * Стандартный размер буфера обмена.
      */

@@ -1,24 +1,32 @@
 package com.company;
 
-import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        /*
-Определите класс SimpleChat, предназначенный для обмена текстовыми
-сообщениями между двумя пользователями в сети. Класс должен реализовывать
-интерфейс ISimpleChat. Класс может работать в двух режимах:
-1. В режиме сервера приложение ожидает запроса на соединение от клиента;
-2. В режиме клиента приложение прежде всего запрашивает у пользователя
-адрес и порт сервера, а затем устанавливает соединение с сервером.
-Инициатором завершения сеанса может выступать как клиент, так и сервер
-приложения.
-Приложение может иметь консольный или графический интерфейс.
-Интерфейс ISimpleChat и класс ChatException прилагаются.
-         */
+        System.out.println("Will App start as server? (default is no) [no/yes]:");
 
+        Scanner options = new Scanner(System.in);
+        String line1 = options.nextLine();
+
+        ISimpleChat ServerOrChat = new SimpleChat();
+
+        try {
+
+            if(line1.equals("yes"))
+                ServerOrChat.server();
+            else
+                ServerOrChat.client();
+
+        } catch (ChatException err) {
+
+            err.printStackTrace();
+        }
+
+
+        //new FileReceiver().run();
 
         System.out.println("Successfully");
     }
