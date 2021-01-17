@@ -1,5 +1,5 @@
-package com.company;
 
+import com.company.*;
 import java.util.Scanner;
 
 public class Main {
@@ -11,23 +11,18 @@ public class Main {
         Scanner options = new Scanner(System.in);
         String line1 = options.nextLine();
 
-        ISimpleChat ServerOrChat = new SimpleChat();
-
         try {
 
             if(line1.equals("yes"))
-                ServerOrChat.server();
+                new Server();
             else
-                ServerOrChat.client();
+                new Client();
 
         } catch (ChatException err) {
 
             err.printStackTrace();
         }
 
-
-        //new FileReceiver().run();
-
-        System.out.println("Successfully");
+        System.out.println("End");
     }
 }

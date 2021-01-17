@@ -1,6 +1,7 @@
 /*
  * Курс DEV-J130. Задание №4. Основы многопоточного программирования.
  */
+
 package com.company;
 
 /**
@@ -8,7 +9,7 @@ package com.company;
  *
  * @author (C)Y.D.Zakovryashin, 01.12.2020
  */
-class ChatException extends Exception {
+public class ChatException extends Exception {
 
     public ChatException() {
     }
@@ -17,4 +18,7 @@ class ChatException extends Exception {
         super(string);
     }
 
+    public ChatException(Throwable err) {
+        super(err);
+    }
 }

@@ -1,6 +1,7 @@
 /*
  * Курс DEV-J130. Задание №4. Основы многопоточного программирования.
  */
+
 package com.company;
 
 /**
@@ -44,7 +45,7 @@ public interface ISimpleChat extends AutoCloseable {
      * приложения, например, в случае невозможности открыть соединение с
      * сервером.
      */
-    void client() throws ChatException;
+    //void client() throws ChatException;
 
     /**
      *
@@ -52,7 +53,7 @@ public interface ISimpleChat extends AutoCloseable {
      * приложения, например, в случае невозможности занять стандартный порт
      * сервера.
      */
-    void server() throws ChatException;
+    //void server() throws ChatException;
 
     /**
      * Метод возвращает принятое сообщение.
