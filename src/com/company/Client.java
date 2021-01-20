@@ -3,11 +3,13 @@ package com.company;
 import java.io.IOException;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
+
 
 public class Client implements ISimpleChat {
+
+    private InputStream rawIn;
+    private OutputStream rawOut;
 
     public Client() throws ChatException {
 
@@ -41,19 +43,19 @@ public class Client implements ISimpleChat {
         }
  */
 
-        try(Socket client = new Socket(host, port);
-            DataOutputStream out = new DataOutputStream(client.getOutputStream());
-            DataInputStream in = new DataInputStream(client.getInputStream());
+        try(Socket client = new Socket(host, port)) {
 
-        ) {
+            rawIn = client.getInputStream();
+            rawOut = client.getOutputStream();
 
             System.out.println("Enter message to send to server: ");
 
             while(!client.isOutputShutdown()) {
 
-                if(in.available() > 0) {
+                if(rawIn.available() > 0) {
 
-                    System.out.println( in.readUTF() );
+                    System.out.println( getMessage() );
+
                     Thread.sleep(100);
                 }
 
@@ -68,8 +70,7 @@ public class Client implements ISimpleChat {
                     break;
                 }
 
-                out.writeUTF(clientCommand);
-                out.flush();
+                sendMessage( clientCommand );
             }
 
             br.close();
@@ -80,18 +81,32 @@ public class Client implements ISimpleChat {
         }
     }
 
-    public void sendMessage(String message) throws ChatException {};
+    public void sendMessage(String message) throws ChatException {
+
+        try {
+
+            DataOutputStream out = new DataOutputStream(rawOut);
+
+            out.writeUTF(message);
+            out.flush();
+        } catch (IOException err) {
+
+            throw new ChatException(err);
+        }
+    };
 
     public String getMessage() throws ChatException {
-        return "";
+
+        try {
+
+            DataInputStream in = new DataInputStream(rawIn);
+
+            return in.readUTF();
+        } catch (IOException err) {
+
+            throw new ChatException(err);
+        }
     };
-
-    public void server() throws ChatException {
-
-    };
-
-    public void client() throws ChatException {};
 
     public void close() throws ChatException {};
-
 }
